@@ -8,7 +8,7 @@ from setuptools import setup
 
 version = re.search(
     '^__version__\s*=\s*"(.*)"',
-    open('twomartens.markdown/markdown.py').read(),
+    open('twomartens/markdown/markdown.py').read(),
     re.M
 ).group(1)
 
@@ -17,6 +17,7 @@ with open("README.md", "rb") as f:
 
 setup(
     name="twomartens.markdown",
+    namespace_packages=["twomartens"],
     packages=["twomartens.markdown"],
     entry_points={
         "console_scripts": ['markdown = twomartens.markdown.markdown:main']
