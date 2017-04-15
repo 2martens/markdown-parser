@@ -25,11 +25,11 @@ class EmptyLine(modgrammar.Grammar):
 class Heading(modgrammar.Grammar):
     """Defines the grammar for a heading."""
     grammar = (modgrammar.BOL, modgrammar.REPEAT(modgrammar.L("#"), min=1, max=6),
-               modgrammar.REST_OF_LINE, modgrammar.EOL)
+               modgrammar.L(" "), modgrammar.REST_OF_LINE, modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the headline for later use."""
-        self.text = self[2].string
+        self.text = self[3].string
         hashtags = self[1].string
         self.tag = "h" + str(len(hashtags))
 
