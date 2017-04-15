@@ -114,6 +114,7 @@ class Paragraph(modgrammar.Grammar):
 class MarkdownGrammar(modgrammar.Grammar):
     """Provides the grammar for Markdown."""
     grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, Paragraph, List, EmptyLine)))
+    grammar_collapse = True
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
