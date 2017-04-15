@@ -43,13 +43,26 @@ class Italic(modgrammar.Grammar):
         self.boldText = self[1].string
 
 
-class Quote(modgrammar.Grammar):
-    """Defines the grammar for a quote."""
-    grammar = (modgrammar.BOL, modgrammar.L(">"), modgrammar.REST_OF_LINE)
+class QuoteLine(modgrammar.Grammar):
+    """Defines the grammar for a single line quote."""
+    grammar = (modgrammar.BOL, modgrammar.L(">"), modgrammar.REST_OF_LINE, modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.quote = self[2].string
+        self.quoteLine = self[2].string
+
+
+class Quote(modgrammar.Grammar):
+    """Defines the grammar for a quote."""
+    grammar = (modgrammar.REPEAT(QuoteLine, min=1))
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
+        quote = ""
+        for elem in self.find_all(QuoteLine):
+            quote = quote + " " + elem.quoteLine
+
+        self.quote = quote
 
 
 class ListItem(modgrammar.Grammar):
