@@ -68,13 +68,22 @@ class Quote(modgrammar.Grammar):
         self.tag = "quote"
 
 
-class ListItem(modgrammar.Grammar):
-    """Defines the grammar for a list item."""
-    grammar = (modgrammar.BOL, modgrammar.L("* "), modgrammar.REST_OF_LINE)
+class SimpleText(modgrammar.Grammar):
+    """Defines the grammar for simple text."""
+    grammar = (modgrammar.WORD("\S \t", escapes=True, fullmatch=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.text = self[2].string
+        self.text = self[0].string
+        self.tag = "text"
+
+
+class ListItem(modgrammar.Grammar):
+    """Defines the grammar for a list item."""
+    grammar = (modgrammar.BOL, modgrammar.L("* "), modgrammar.REPEAT(modgrammar.OR(SimpleText, Bold, Italic)))
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
         self.tag = "li"
 
 
@@ -85,16 +94,6 @@ class List(modgrammar.Grammar):
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
         self.tag = "list"
-
-
-class SimpleText(modgrammar.Grammar):
-    """Defines the grammar for simple text."""
-    grammar = (modgrammar.WORD("\S \t", escapes=True, fullmatch=True))
-
-    def grammar_elem_init(self, sessiondata):
-        """Saves the text for later use."""
-        self.text = self[0].string
-        self.tag = "text"
 
 
 class Text(modgrammar.Grammar):
