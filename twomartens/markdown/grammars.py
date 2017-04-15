@@ -14,9 +14,9 @@ class Heading(modgrammar.Grammar):
 
     def grammar_elem_init(self, sessiondata):
         """Saves the headline for later use."""
-        self.headline = self[3].string
+        self.text = self[3].string
         hashtags = self[1].string
-        self.tag = 'h' + str(len(hashtags))
+        self.tag = "h" + str(len(hashtags))
 
 
 class EmptyLine(modgrammar.Grammar):
@@ -31,7 +31,8 @@ class Bold(modgrammar.Grammar):
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.boldText = self[1].string
+        self.text = self[1].string
+        self.tag = "b"
 
 
 class Italic(modgrammar.Grammar):
@@ -40,7 +41,8 @@ class Italic(modgrammar.Grammar):
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.boldText = self[1].string
+        self.text = self[1].string
+        self.tag = "i"
 
 
 class QuoteLine(modgrammar.Grammar):
@@ -62,7 +64,8 @@ class Quote(modgrammar.Grammar):
         for elem in self.find_all(QuoteLine):
             quote = quote + " " + elem.quoteLine
 
-        self.quote = quote
+        self.text = quote
+        self.tag = "quote"
 
 
 class ListItem(modgrammar.Grammar):
@@ -71,12 +74,17 @@ class ListItem(modgrammar.Grammar):
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.listItemText = self[2].string
+        self.text = self[2].string
+        self.tag = "li"
 
 
 class List(modgrammar.Grammar):
     """Defines the grammar for a list."""
     grammar = (modgrammar.LIST_OF(ListItem, sep=modgrammar.EOL), modgrammar.EOL)
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
+        self.tag = "list"
 
 
 class Text(modgrammar.Grammar):
@@ -93,6 +101,7 @@ class Paragraph(modgrammar.Grammar):
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
         self.text = self[1].string
+        self.tag = "p"
 
 
 class MarkdownGrammar(modgrammar.Grammar):
