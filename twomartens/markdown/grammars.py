@@ -9,7 +9,7 @@ grammar_whitespace = modgrammar.WS_NOEOL
 
 class SimpleText(modgrammar.Grammar):
     """Defines the grammar for simple text."""
-    grammar = (modgrammar.WORD(startchars="^#*>\n\r", restchars="\S \t", escapes=True, fullmatch=True))
+    grammar = (modgrammar.WORD(startchars="^#*>\n\r", restchars="^\n\r*", escapes=True, fullmatch=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -36,7 +36,7 @@ class Heading(modgrammar.Grammar):
 
 class Bold(modgrammar.Grammar):
     """Defines the grammar for bold text."""
-    grammar = (modgrammar.L(" **"), modgrammar.WORD("\w \t", fullmatch=True, escapes=True), modgrammar.L("** "))
+    grammar = (modgrammar.L("**"), modgrammar.WORD("^\n\r*", escapes=True, fullmatch=True), modgrammar.L("**"))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -46,7 +46,7 @@ class Bold(modgrammar.Grammar):
 
 class Italic(modgrammar.Grammar):
     """Defines the grammar for italic text."""
-    grammar = (modgrammar.L(" *"), modgrammar.WORD("\w \t", fullmatch=True, escapes=True), modgrammar.L("* "))
+    grammar = (modgrammar.L("*"), modgrammar.WORD("^\n\r*", escapes=True, fullmatch=True), modgrammar.L("*"))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -79,7 +79,7 @@ class Quote(modgrammar.Grammar):
 
 class ListItem(modgrammar.Grammar):
     """Defines the grammar for a list item."""
-    grammar = (modgrammar.BOL, modgrammar.L("* "), modgrammar.REPEAT(modgrammar.OR(SimpleText, Bold, Italic)))
+    grammar = (modgrammar.BOL, modgrammar.L("* "), modgrammar.REPEAT(modgrammar.OR(Bold, Italic, SimpleText)))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -88,7 +88,7 @@ class ListItem(modgrammar.Grammar):
 
 class List(modgrammar.Grammar):
     """Defines the grammar for a list."""
-    grammar = (modgrammar.LIST_OF(ListItem, sep=modgrammar.EOL), modgrammar.EOL)
+    grammar = (EmptyLine, modgrammar.LIST_OF(ListItem, sep=modgrammar.EOL), modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -97,7 +97,7 @@ class List(modgrammar.Grammar):
 
 class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
-    grammar = (modgrammar.REPEAT(modgrammar.OR(Bold, Italic, SimpleText),
+    grammar = (modgrammar.REPEAT(modgrammar.REPEAT(modgrammar.OR(Bold, Italic, SimpleText), min=1),
                                  modgrammar.EOL, min=1))
 
 
