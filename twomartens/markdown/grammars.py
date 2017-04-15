@@ -24,7 +24,7 @@ class Heading(modgrammar.Grammar):
 
     def grammar_elem_init(self, sessiondata):
         """Saves the headline for later use."""
-        self.text = self[3].string
+        self.text = self[2].string
         hashtags = self[1].string
         self.tag = "h" + str(len(hashtags))
 
