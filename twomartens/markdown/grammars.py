@@ -87,10 +87,19 @@ class List(modgrammar.Grammar):
         self.tag = "list"
 
 
+class SimpleText(modgrammar.Grammar):
+    """Defines the grammar for simple text."""
+    grammar = (modgrammar.WORD("\S \t", escapes=True, fullmatch=True))
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
+        self.text = self[0].string
+        self.tag = "text"
+
+
 class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
-    grammar = (modgrammar.REPEAT(modgrammar.OR(Bold, Italic, Quote,
-                                               modgrammar.WORD("\S \t", escapes=True, fullmatch=True)),
+    grammar = (modgrammar.REPEAT(modgrammar.OR(Bold, Italic, Quote, SimpleText),
                                  modgrammar.EOL, min=1))
 
 
@@ -100,7 +109,6 @@ class Paragraph(modgrammar.Grammar):
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.text = self[1].string
         self.tag = "p"
 
 
