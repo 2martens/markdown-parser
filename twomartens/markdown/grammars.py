@@ -9,12 +9,18 @@ grammar_whitespace = modgrammar.WS_NOEOL
 
 class SimpleText(modgrammar.Grammar):
     """Defines the grammar for simple text."""
-    grammar = (modgrammar.WORD("\S \t", escapes=True, fullmatch=True))
+    grammar = (modgrammar.WORD(startchars="^#*>", restchars="\S \t", escapes=True, fullmatch=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
         self.text = self[0].string
         self.tag = "text"
+
+
+class EmptyLine(modgrammar.Grammar):
+    """Defines the grammar for an empty line."""
+    grammar = (modgrammar.BOL, modgrammar.EOL)
+    grammar_whitespace_mode = "explicit"
 
 
 class Heading(modgrammar.Grammar):
@@ -27,12 +33,6 @@ class Heading(modgrammar.Grammar):
         self.text = self[2].string
         hashtags = self[1].string
         self.tag = "h" + str(len(hashtags))
-
-
-class EmptyLine(modgrammar.Grammar):
-    """Defines the grammar for an empty line."""
-    grammar = (modgrammar.BOL, modgrammar.EOL)
-    grammar_whitespace_mode = "explicit"
 
 
 class Bold(modgrammar.Grammar):
