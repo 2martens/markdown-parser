@@ -56,7 +56,10 @@ def _html_render_block(tag: str, elements: list, text: str = None, nesting: int 
         if nesting == 1:
             content = content + "\n"
         if _text is not None and len(_children) == 0:
-            content = content + ((nesting * TAB_SEP) if nesting == 1 else "") + \
+            content = content + \
+                      (
+                          ((nesting + 1) * TAB_SEP) if nesting == 1 else ""
+                      ) + \
                       _html_render_item(_tag, _text, _tag != "text")
         else:
             content = content + _html_render_block(_tag, _children, _text, nesting + 1)
