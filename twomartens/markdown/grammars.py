@@ -97,7 +97,7 @@ class List(modgrammar.Grammar):
 
 class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
-    grammar = (modgrammar.REPEAT(modgrammar.OR(Bold, Italic, Quote, SimpleText),
+    grammar = (modgrammar.REPEAT(modgrammar.OR(Bold, Italic, SimpleText),
                                  modgrammar.EOL, min=1))
 
 
@@ -112,7 +112,7 @@ class Paragraph(modgrammar.Grammar):
 
 class MarkdownGrammar(modgrammar.Grammar):
     """Provides the grammar for Markdown."""
-    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, Paragraph, List, EmptyLine)))
+    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, Paragraph, List, Quote, EmptyLine)))
     grammar_collapse = True
 
     def grammar_elem_init(self, sessiondata):
