@@ -4,12 +4,13 @@
 import modgrammar
 
 grammar_whitespace_mode = "optional"
+grammar_whitespace = modgrammar.WS_NOEOL
 
 
 class Heading(modgrammar.Grammar):
     """Defines the grammar for a heading."""
-    grammar = (modgrammar.BOL, modgrammar.REPEAT(modgrammar.L("#"), min=1, max=6), modgrammar.L(" "),
-               modgrammar.REST_OF_LINE)
+    grammar = (modgrammar.BOL, modgrammar.REPEAT(modgrammar.L("#"), min=1, max=6),
+               modgrammar.REST_OF_LINE, modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the headline for later use."""
@@ -21,6 +22,7 @@ class Heading(modgrammar.Grammar):
 class EmptyLine(modgrammar.Grammar):
     """Defines the grammar for an empty line."""
     grammar = (modgrammar.BOL, modgrammar.EOL)
+    grammar_whitespace_mode = "explicit"
 
 
 class Bold(modgrammar.Grammar):
@@ -61,19 +63,19 @@ class ListItem(modgrammar.Grammar):
 
 class List(modgrammar.Grammar):
     """Defines the grammar for a list."""
-    grammar = (modgrammar.LIST_OF(ListItem, sep=modgrammar.EOL))
+    grammar = (modgrammar.LIST_OF(ListItem, sep=modgrammar.EOL), modgrammar.EOL)
 
 
 class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
     grammar = (modgrammar.REPEAT(modgrammar.OR(Bold, Italic, Quote,
-                                               modgrammar.WORD("\w \t", escapes=True, fullmatch=True)),
+                                               modgrammar.WORD("\S \t", escapes=True, fullmatch=True)),
                                  modgrammar.EOL, min=1))
 
 
 class Paragraph(modgrammar.Grammar):
     """Defines the grammar for a paragraph."""
-    grammar = (EmptyLine, Text, EmptyLine)
+    grammar = (EmptyLine, Text, modgrammar.OPTIONAL(EmptyLine))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -82,7 +84,7 @@ class Paragraph(modgrammar.Grammar):
 
 class MarkdownGrammar(modgrammar.Grammar):
     """Provides the grammar for Markdown."""
-    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, Paragraph, List)))
+    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, Paragraph, List, EmptyLine)))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
