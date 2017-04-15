@@ -3,7 +3,7 @@
 """markdown.grammars: Contains the grammars for markdown."""
 import modgrammar
 
-grammar_whitespace_mode = "optional"
+grammar_whitespace_mode = "explicit"
 grammar_whitespace = modgrammar.WS_NOEOL
 
 
@@ -20,7 +20,6 @@ class SimpleText(modgrammar.Grammar):
 class EmptyLine(modgrammar.Grammar):
     """Defines the grammar for an empty line."""
     grammar = (modgrammar.BOL, modgrammar.EOL)
-    grammar_whitespace_mode = "explicit"
 
 
 class Heading(modgrammar.Grammar):
