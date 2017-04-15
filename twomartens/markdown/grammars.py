@@ -7,10 +7,20 @@ grammar_whitespace_mode = "optional"
 grammar_whitespace = modgrammar.WS_NOEOL
 
 
+class SimpleText(modgrammar.Grammar):
+    """Defines the grammar for simple text."""
+    grammar = (modgrammar.WORD("\S \t", escapes=True, fullmatch=True))
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
+        self.text = self[0].string
+        self.tag = "text"
+
+
 class Heading(modgrammar.Grammar):
     """Defines the grammar for a heading."""
     grammar = (modgrammar.BOL, modgrammar.REPEAT(modgrammar.L("#"), min=1, max=6),
-               modgrammar.REST_OF_LINE, modgrammar.EOL)
+               modgrammar.WORD("\S \t", escapes=True, fullmatch=True), modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the headline for later use."""
@@ -47,7 +57,8 @@ class Italic(modgrammar.Grammar):
 
 class QuoteLine(modgrammar.Grammar):
     """Defines the grammar for a single line quote."""
-    grammar = (modgrammar.BOL, modgrammar.L(">"), modgrammar.REST_OF_LINE, modgrammar.EOL)
+    grammar = (modgrammar.BOL, modgrammar.L(">"), modgrammar.WORD("\S \t", escapes=True, fullmatch=True),
+               modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -66,16 +77,6 @@ class Quote(modgrammar.Grammar):
 
         self.text = quote
         self.tag = "quote"
-
-
-class SimpleText(modgrammar.Grammar):
-    """Defines the grammar for simple text."""
-    grammar = (modgrammar.WORD("\S \t", escapes=True, fullmatch=True))
-
-    def grammar_elem_init(self, sessiondata):
-        """Saves the text for later use."""
-        self.text = self[0].string
-        self.tag = "text"
 
 
 class ListItem(modgrammar.Grammar):
