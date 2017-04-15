@@ -9,7 +9,7 @@ grammar_whitespace = modgrammar.WS_NOEOL
 
 class SimpleText(modgrammar.Grammar):
     """Defines the grammar for simple text."""
-    grammar = (modgrammar.WORD(startchars="^#*>", restchars="\S \t", escapes=True, fullmatch=True))
+    grammar = (modgrammar.WORD(startchars="^#*>\n\r", restchars="\S \t", escapes=True, fullmatch=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
