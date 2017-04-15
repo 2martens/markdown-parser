@@ -20,7 +20,7 @@ class SimpleText(modgrammar.Grammar):
 class Heading(modgrammar.Grammar):
     """Defines the grammar for a heading."""
     grammar = (modgrammar.BOL, modgrammar.REPEAT(modgrammar.L("#"), min=1, max=6),
-               modgrammar.WORD("\S \t", escapes=True, fullmatch=True), modgrammar.EOL)
+               modgrammar.REST_OF_LINE, modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the headline for later use."""
@@ -57,8 +57,7 @@ class Italic(modgrammar.Grammar):
 
 class QuoteLine(modgrammar.Grammar):
     """Defines the grammar for a single line quote."""
-    grammar = (modgrammar.BOL, modgrammar.L(">"), modgrammar.WORD("\S \t", escapes=True, fullmatch=True),
-               modgrammar.EOL)
+    grammar = (modgrammar.BOL, modgrammar.L(">"), modgrammar.REST_OF_LINE, modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
