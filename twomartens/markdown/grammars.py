@@ -78,22 +78,23 @@ class Quote(modgrammar.Grammar):
         self.tag = "quote"
 
 
-class ListItem(modgrammar.Grammar):
-    """Defines the grammar for a list item."""
-    grammar = (modgrammar.BOL, modgrammar.L("* "), modgrammar.REPEAT(modgrammar.OR(Bold, Italic, SimpleText)))
+class UnorderedListItem(modgrammar.Grammar):
+    """Defines the grammar for an unordered list item."""
+    grammar = (modgrammar.BOL, modgrammar.OR(modgrammar.L("* "), modgrammar.L("- "), modgrammar.L("+ ")),
+               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, SimpleText)))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
         self.tag = "li"
 
 
-class List(modgrammar.Grammar):
-    """Defines the grammar for a list."""
-    grammar = (EmptyLine, modgrammar.LIST_OF(ListItem, sep=modgrammar.EOL), modgrammar.EOL)
+class UnorderedList(modgrammar.Grammar):
+    """Defines the grammar for an unordered list."""
+    grammar = (EmptyLine, modgrammar.LIST_OF(UnorderedListItem, sep=modgrammar.EOL), modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.tag = "list"
+        self.tag = "unordered_list"
 
 
 class Text(modgrammar.Grammar):
@@ -113,7 +114,7 @@ class Paragraph(modgrammar.Grammar):
 
 class MarkdownGrammar(modgrammar.Grammar):
     """Provides the grammar for Markdown."""
-    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, Paragraph, List, Quote, EmptyLine)))
+    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, Paragraph, UnorderedList, Quote, EmptyLine)))
     grammar_collapse = True
 
     def grammar_elem_init(self, sessiondata):
