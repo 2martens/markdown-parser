@@ -1,6 +1,8 @@
 # coding=utf-8
 
 """markdown.grammars: Contains the grammars for markdown."""
+import html
+
 import modgrammar
 
 grammar_whitespace_mode = "explicit"
@@ -61,7 +63,7 @@ class InlineCode(modgrammar.Grammar):
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.text = self[1].string
+        self.text = html.escape(self[1].string)
         self.tag = "code"
 
 
