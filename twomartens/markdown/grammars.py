@@ -103,7 +103,7 @@ class Text(modgrammar.Grammar):
 
 class Paragraph(modgrammar.Grammar):
     """Defines the grammar for a paragraph."""
-    grammar = (EmptyLine, Text, modgrammar.OPTIONAL(EmptyLine))
+    grammar = (modgrammar.OPTIONAL(EmptyLine), Text, modgrammar.OPTIONAL(EmptyLine))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
