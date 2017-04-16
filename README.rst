@@ -97,8 +97,9 @@ Example::
 Lists
 ^^^^^
 
-Currently only unordered lists are supported. The list items have to start with ``* ``, ``- `` or ``+ `` at the
-beginning of the line. These symbols can be used interchangeably even within one list. An empty line must precede a list.
+Both unordered and ordered lists are supported. The list items for unordered have to start with ``* ``, ``- `` or ``+ ``
+at the beginning of the line. These symbols can be used interchangeably even within one list. An empty line must precede
+a list.
 
 Example::
 
@@ -111,6 +112,20 @@ Example::
 
    * but this is a new list
    * which even contains **bold text** and *italic text*
+
+The list items of ordered lists have to start with numbers (``0-9``), followed by a dot (``.``) and a space.
+It doesn't matter for the output which numbers stand in front of the dot.
+
+Example::
+
+
+   1.  this starts an ordered list
+   2.  which is continued here
+   9.  and here
+   0.  it can also contain **bold text**
+   11. and *italic text*
+
+   0. a new list is started here
 
 Quotes
 ^^^^^^
