@@ -20,7 +20,7 @@ setup(
     namespace_packages=["twomartens"],
     packages=["twomartens.markdown"],
     entry_points={
-        "console_scripts": ['markdown = twomartens.markdown.markdown:main']
+        "console_scripts": ['tm-parse-markdown = twomartens.markdown.markdown:main']
     },
     version=version,
     package_data={"twomartens.markdown": ["templates/skeleton.*"]},
