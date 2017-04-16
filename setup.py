@@ -23,6 +23,14 @@ setup(
         "console_scripts": ['markdown = twomartens.markdown.markdown:main']
     },
     version=version,
+    package_data={"twomartens.markdown": ["templates/skeleton.*"]},
+    classifiers=[
+        "License :: OSI Approved :: Apache Software License",
+        "Environment :: Console",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+    ],
     description="Markdown parser that renders the markdown in HTML",
     long_description=long_desc,
     author="Jim Martens",
