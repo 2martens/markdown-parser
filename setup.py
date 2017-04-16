@@ -27,6 +27,8 @@ setup(
     license="Apache Software License",
     install_requires=["modgrammar"],
     classifiers=[
+        "Operating System :: OS Independent",
+        "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: Apache Software License",
         "Environment :: Console",
         "Topic :: Text Processing :: Markup",
