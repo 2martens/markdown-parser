@@ -11,7 +11,7 @@ import modgrammar
 from .parser import parse as markdown_parse
 from .renderer import render
 
-__version__ = "1.0.0.dev3"
+__version__ = "1.0.0.dev4"
 
 
 def main():
