@@ -41,5 +41,4 @@ def main():
         print("The output file has been written.")
     except modgrammar.ParseError as pe:
         # the input is no valid markdown as per our grammar definition
-        print("The input file doesn't contain valid markdown. Line " + str(pe.line) + ", column " + str(pe.col) +
-              ": Expected " + str(pe.expected) + " but found " + str(pe.buffer) + " instead.")
+        raise pe
