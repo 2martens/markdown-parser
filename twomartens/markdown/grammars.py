@@ -9,17 +9,18 @@ grammar_whitespace = modgrammar.WS_NOEOL
 
 class SimpleText(modgrammar.Grammar):
     """Defines the grammar for simple text."""
-    grammar = (modgrammar.WORD(startchars="^#*>\n\r", restchars="^\n\r*", escapes=True, fullmatch=True))
+    grammar = (modgrammar.REPEAT(modgrammar.SPACE, min=0),
+               modgrammar.WORD(startchars="\w", restchars="^\n\r*", escapes=True, fullmatch=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.text = self[0].string
+        self.text = self[1].string
         self.tag = "text"
 
 
 class EmptyLine(modgrammar.Grammar):
     """Defines the grammar for an empty line."""
-    grammar = (modgrammar.BOL, modgrammar.EOL)
+    grammar = (modgrammar.BOL, modgrammar.REPEAT(modgrammar.SPACE, min=0), modgrammar.EOL)
 
 
 class Heading(modgrammar.Grammar):
