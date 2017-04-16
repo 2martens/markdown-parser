@@ -29,7 +29,7 @@ A bit more complicated
 The Git way (No actual installation)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. Clone the [GitHub repository](https://github.com/frmwrk123/markdown-parser) 
+1. Clone the `GitHub repository <https://github.com/frmwrk123/markdown-parser>`_
 2. Run ``python markdown-runner.py`` to use the tool
 
 Usage
