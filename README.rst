@@ -97,9 +97,9 @@ Example::
 Lists
 ^^^^^
 
-Both unordered and ordered lists are supported. The list items for unordered have to start with ``* ``, ``- `` or ``+ ``
-at the beginning of the line. These symbols can be used interchangeably even within one list. An empty line must precede
-a list.
+Both unordered and ordered lists are supported. The list items for unordered lists have to start their line with
+``*``, ``-`` or ``+`` immediately followed by a space. These symbols can be used interchangeably even within one list.
+An empty line must precede a list.
 
 Example::
 
