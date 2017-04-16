@@ -28,7 +28,7 @@ def _html_render(structure: modgrammar.Grammar) -> str:
     
     :param modgrammar.Grammar structure: the structure which is rendered
     """
-    replacements = {"unordered_list": "ul", "quote": "blockquote"}
+    replacements = {"unordered_list": "ul", "quote": "blockquote", "ordered_list": "ol"}
     elements = _extract_elements(structure, replacements)
 
     script_dir = os.path.dirname(__file__)

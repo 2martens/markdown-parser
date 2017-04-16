@@ -97,6 +97,25 @@ class UnorderedList(modgrammar.Grammar):
         self.tag = "unordered_list"
 
 
+class OrderedListItem(modgrammar.Grammar):
+    """Defines the grammar for an unordered list item."""
+    grammar = (modgrammar.BOL, modgrammar.WORD(startchars="0-9", fullmatch=True),
+               modgrammar.L(". "), modgrammar.REPEAT(modgrammar.OR(Bold, Italic, SimpleText)))
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
+        self.tag = "li"
+
+
+class OrderedList(modgrammar.Grammar):
+    """Defines the grammar for an unordered list."""
+    grammar = (EmptyLine, modgrammar.LIST_OF(OrderedListItem, sep=modgrammar.EOL), modgrammar.EOL)
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
+        self.tag = "ordered_list"
+
+
 class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
     grammar = (modgrammar.REPEAT(modgrammar.REPEAT(modgrammar.OR(Bold, Italic, SimpleText), min=1),
@@ -114,7 +133,7 @@ class Paragraph(modgrammar.Grammar):
 
 class MarkdownGrammar(modgrammar.Grammar):
     """Provides the grammar for Markdown."""
-    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, Paragraph, UnorderedList, Quote, EmptyLine)))
+    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, UnorderedList, OrderedList, Quote, Paragraph, EmptyLine)))
     grammar_collapse = True
 
     def grammar_elem_init(self, sessiondata):
