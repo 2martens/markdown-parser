@@ -94,6 +94,15 @@ Example::
    *some italic text*
    the *italic text* can also appear in paragraphs
 
+Inline code
+^^^^^^^^^^^
+
+Inline code segments are supported.
+
+Example::
+
+   a paragraph with `inline code`
+
 Lists
 ^^^^^
 
@@ -112,6 +121,7 @@ Example::
 
    * but this is a new list
    * which even contains **bold text** and *italic text*
+   * or an `inline code segment`
 
 The list items of ordered lists have to start with numbers (``0-9``), followed by a dot (``.``) and a space.
 It doesn't matter for the output which numbers stand in front of the dot.
@@ -124,6 +134,7 @@ Example::
    9.  and here
    0.  it can also contain **bold text**
    11. and *italic text*
+   99. and `inline code`
 
    0. a new list is started here
 
@@ -139,6 +150,7 @@ Examples::
    > A new quote starts here
    > and continues in the next line.
    > It can contain **not rendered bold text** and *not rendered italic text*.
+   > inline `code blocks` are also not rendered
 
 Paragraphs
 ^^^^^^^^^^
