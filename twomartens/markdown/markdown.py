@@ -6,6 +6,8 @@
 
 import argparse
 
+import modgrammar
+
 from .parser import parse as markdown_parse
 from .renderer import render
 
@@ -25,14 +27,19 @@ def main():
     # load file content
     markdown = args.input.read()
 
-    # parse markdown
-    structure = markdown_parse(markdown)
+    try:
+        # parse markdown
+        structure = markdown_parse(markdown)
 
-    # render output
-    output = render(structure, args.renderer)
+        # render output
+        output = render(structure, args.renderer)
 
-    # write output
-    args.output.write(output)
+        # write output
+        args.output.write(output)
 
-    # give feedback to console
-    print("The output file has been written.")
+        # give feedback to console
+        print("The output file has been written.")
+    except modgrammar.ParseError as pe:
+        # the input is no valid markdown as per our grammar definition
+        print("The input file doesn't contain valid markdown. Line " + pe.line + ", column " + pe.col +
+              ": Expected " + pe.expected + " but found " + pe.buffer + " instead.")
