@@ -12,8 +12,8 @@ version = re.search(
     re.M
 ).group(1)
 
-with open("README.md", "rb") as f:
-    long_desc = f.read().decode("utf-8")
+with open("README.rst", "rb") as f:
+    long_desc = f.read().decode()
 
 setup(
     name="twomartens.markdown",
