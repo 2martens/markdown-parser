@@ -24,6 +24,8 @@ setup(
     },
     version=version,
     package_data={"twomartens.markdown": ["templates/skeleton.*"]},
+    license="Apache Software License",
+    install_requires=["modgrammar"],
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
         "Environment :: Console",
