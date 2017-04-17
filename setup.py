@@ -43,7 +43,7 @@ setup(
     package_data={"twomartens.markdown": ["templates/skeleton.*"]},
     python_requires="~=3.5",
     install_requires=["modgrammar"],
-    license="Apache Software License",
+    license="Apache License 2.0",
     classifiers=[
         "Operating System :: OS Independent",
         "Development Status :: 2 - Pre-Alpha",
