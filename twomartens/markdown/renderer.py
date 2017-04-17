@@ -55,16 +55,17 @@ def _html_render(structure: modgrammar.Grammar) -> str:
     heading = structure.find(Heading)
     title = heading.text
 
-    for tag, text, children, attributes in elements:
+    for tag, text, children, attributes, options in elements:
         if content != "":
             content = content + "\n"
-        content = content + _html_render_block(tag, children, text, attributes)
+        content = content + _html_render_block(tag, children, text, attributes, options)
 
     output = template.substitute(title=title, content=content)
     return output
 
 
-def _html_render_block(tag: str, elements: list, text: str = None, attributes: map = None, nesting: int = 1) -> str:
+def _html_render_block(tag: str, elements: list, text: str = None, attributes: map = None, options: map = None,
+                       nesting: int = 1) -> str:
     """Renders an HTML block element and returns the HTML output.
     
     Level 1 elements are indented by four spaces. Level 2 elements are indented by 8 spaces and so on.
@@ -77,24 +78,28 @@ def _html_render_block(tag: str, elements: list, text: str = None, attributes: m
     :param list elements: a list of all the child elements
     :param str text: the text of the block element between the HTML tags if available
     :param map attributes: a map of all attributes of this block element
+    :param map options: a map of options for this block element
     :param int nesting: the level this block is on (e.g. direct child of body element is on level 1)
     """
     attributes = attributes if attributes is not None else {}
+    default_options = {"indentation": True}
+    options = {**default_options, **options} if options is not None else default_options
     content = (nesting * TAB_SEP) + "<" + tag + _html_render_attributes(attributes) + ">"
     if len(elements) == 0 and text is not None:
         content = content + text
-    for _tag, _text, _children, _attributes in elements:
-        if nesting == 1:
+    for _tag, _text, _children, _attributes, _options in elements:
+        _options = {**default_options, **_options} if _options is not None else default_options
+        if nesting == 1 and options["indentation"]:
             content = content + "\n"
         if _text is not None and len(_children) == 0:
             content = content + \
                       (
-                          ((nesting + 1) * TAB_SEP) if nesting == 1 else ""
+                          ((nesting + 1) * TAB_SEP) if nesting == 1 and _options["indentation"] else ""
                       ) + \
                       _html_render_item(_tag, _text, _attributes, _tag != "text")
         else:
-            content = content + _html_render_block(_tag, _children, _text, _attributes, nesting + 1)
-    if nesting == 1 and len(elements):
+            content = content + _html_render_block(_tag, _children, _text, _attributes, _options, nesting + 1)
+    if nesting == 1 and len(elements) and options["indentation"]:
         content = content + "\n" + (nesting * TAB_SEP)
     content = content + "</" + tag + ">"
     return content
@@ -135,7 +140,9 @@ def _html_render_attributes(attributes: map) -> str:
 
 
 def _extract_elements(structure: modgrammar.Grammar, replacements: map = None) -> list:
-    """Extracts tag, text, children and attributes for all elements in the given structure and returns those in a list.
+    """Extracts the relevant data for all elements in the given structure and returns it in a list.
+    
+    This data includes the tag, text, children, attributes and options.
     
     :param modgrammar.Grammar structure: the structure from which the elements are extracted
     :param map replacements: an optional map of replacements for found tags 
@@ -147,12 +154,13 @@ def _extract_elements(structure: modgrammar.Grammar, replacements: map = None) -
         text = elem.text if hasattr(elem, "text") else None
         children = []
         attributes = elem.attributes if hasattr(elem, "attributes") else {}
+        options = elem.options if hasattr(elem, "options") else {}
         if replacements is not None and tag is not None:
             tag = replacements[tag] if tag in replacements else tag
         if (tag is None or text is None) and hasattr(elem, "elements") and len(elem.elements):
             children = _extract_elements(elem)
         if tag is not None:
-            elements.append((tag, text, children, attributes))
+            elements.append((tag, text, children, attributes, options))
         elif len(children):
             elements = elements + children
 

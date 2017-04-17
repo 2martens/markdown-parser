@@ -50,3 +50,14 @@ Or one with `inline code that contains <html> tags`. **bold**$variable
 
 > Even a quote with **bold text** and *italic text* or even `code segments`
 > Even [links](https://example.com), <https://example.com> are possible
+
+And here follows a code block:
+
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Test</title>
+        </head>
+        <body>
+        </body>
+    </html>

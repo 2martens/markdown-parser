@@ -185,6 +185,34 @@ class OrderedList(modgrammar.Grammar):
         self.tag = "ordered_list"
 
 
+class CodeBlock(modgrammar.Grammar):
+    """Defines the grammar for a code block."""
+    grammar = (modgrammar.REPEAT(modgrammar.BOL, modgrammar.L("    ") | modgrammar.L("\t"),
+                                 modgrammar.REST_OF_LINE,
+                                 modgrammar.EOL))
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
+        self.tag = "code"
+        text = ""
+        for elem in self.find_all(modgrammar.REST_OF_LINE):
+            if text != "":
+                text += "\n"
+            text += html.escape(elem.string)
+        self.text = text
+        self.options = {"indentation": False}
+
+
+class PreBlock(modgrammar.Grammar):
+    """Defines the grammar for a pre block."""
+    grammar = (modgrammar.OPTIONAL(EmptyLine), CodeBlock, modgrammar.OPTIONAL(EmptyLine))
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
+        self.tag = "pre"
+        self.options = {"indentation": False}
+
+
 class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
     grammar = (modgrammar.REPEAT(
@@ -204,7 +232,8 @@ class Paragraph(modgrammar.Grammar):
 
 class MarkdownGrammar(modgrammar.Grammar):
     """Provides the grammar for Markdown."""
-    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, UnorderedList, OrderedList, Quote, Paragraph, EmptyLine)))
+    grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, UnorderedList, OrderedList, Quote, Paragraph,
+                                               EmptyLine, PreBlock)))
     grammar_collapse = True
 
     def grammar_elem_init(self, sessiondata):

@@ -167,6 +167,24 @@ Examples::
    > inline `code blocks` are also possible
    > The same goes for [links](https://example.com), <https://example.com>
 
+Code blocks
+^^^^^^^^^^^
+
+Code blocks are supported. They have to be preceded and followed by an empty line. Each line must start with either 4
+spaces or one tab. The text is encoded so that you can easily use for example HTML tags in a code block. Further spaces
+beyond these four spaces or one tab are represented in the output unchanged.
+
+Example::
+
+   <!DOCTYPE html>
+   <html>
+       <head>
+           <title>Test</title>
+       </head>
+       <body>
+       </body>
+   </html>
+
 Paragraphs
 ^^^^^^^^^^
 
