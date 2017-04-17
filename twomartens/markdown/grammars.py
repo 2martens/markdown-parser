@@ -178,10 +178,9 @@ class OrderedList(modgrammar.Grammar):
 
 class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
-    grammar = (modgrammar.REPEAT(modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink,
-                                                                 SimpleText),
-                                                   min=1),
-                                 modgrammar.EOL, min=1))
+    grammar = (modgrammar.REPEAT(
+        modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText)),
+        modgrammar.EOL))
 
 
 class Paragraph(modgrammar.Grammar):
