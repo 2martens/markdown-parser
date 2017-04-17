@@ -147,6 +147,7 @@ class Quote(modgrammar.Grammar):
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
         self.tag = "quote"
+        self.options = {"onlyOuterLinebreaks": True}
 
 
 class UnorderedListItem(modgrammar.Grammar):
@@ -231,6 +232,7 @@ class Paragraph(modgrammar.Grammar):
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
         self.tag = "p"
+        self.options = {"onlyOuterLinebreaks": True}
 
 
 class MarkdownGrammar(modgrammar.Grammar):

@@ -22,7 +22,6 @@ import modgrammar
 
 from .grammars import Heading
 
-
 TAB_SEP = "    "
 
 
@@ -82,21 +81,27 @@ def _html_render_block(tag: str, elements: list, text: str = None, attributes: m
     :param int nesting: the level this block is on (e.g. direct child of body element is on level 1)
     """
     attributes = attributes if attributes is not None else {}
-    default_options = {"indentation": True}
+    default_options = {"indentation": True, "onlyOuterLinebreaks": False}
     options = {**default_options, **options} if options is not None else default_options
     content = (nesting * TAB_SEP) + "<" + tag + _html_render_attributes(attributes) + ">"
+    inserted_linebreaks = 0
+    inserted_indents = 0
     if len(elements) == 0 and text is not None:
         content = content + text
     for _tag, _text, _children, _attributes, _options in elements:
         _options = {**default_options, **_options} if _options is not None else default_options
-        if nesting == 1 and options["indentation"]:
+        if nesting == 1 and options["indentation"] and ((options["onlyOuterLinebreaks"] and inserted_linebreaks == 0)
+                                                        or (not options["onlyOuterLinebreaks"])):
             content = content + "\n"
+            inserted_linebreaks += 1
         if _text is not None and len(_children) == 0:
-            content = content + \
-                      (
-                          ((nesting + 1) * TAB_SEP) if nesting == 1 and _options["indentation"] else ""
-                      ) + \
-                      _html_render_item(_tag, _text, _attributes, _tag != "text")
+            indent = ((nesting + 1) * TAB_SEP)
+            if (nesting == 1 and options["indentation"]
+                and (not options["onlyOuterLinebreaks"]
+                     or (options["onlyOuterLinebreaks"] and inserted_indents == 0))):
+                content += indent
+                inserted_indents += 1
+            content += _html_render_item(_tag, _text, _attributes, _tag != "text")
         else:
             content = content + _html_render_block(_tag, _children, _text, _attributes, _options, nesting + 1)
     if nesting == 1 and len(elements) and options["indentation"]:
