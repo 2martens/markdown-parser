@@ -156,3 +156,10 @@ Paragraphs
 ^^^^^^^^^^
 
 Paragraphs are naturally supported as well. They are separated from each other with empty lines.
+
+Example::
+
+   A paragraph starts here. It contains **bold text** or *italic text*.
+   It continues in the next line with a `code segment`.
+
+   This text belongs to a new paragraph.
