@@ -119,7 +119,7 @@ def _html_render_item(tag: str, text: str, attributes: map = None, include_tags=
     if include_tags:
         return opening_tag + text + closing_tag
     else:
-        return " " + text
+        return text
 
 
 def _html_render_attributes(attributes: map) -> str:

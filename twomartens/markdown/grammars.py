@@ -38,7 +38,10 @@ class SimpleText(modgrammar.Grammar):
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        self.text = self[1].string
+        spaces = ""
+        for elem in self.find_all(SingleWhitespace):
+            spaces += elem.string
+        self.text = spaces + self[1].string
         self.tag = "text"
 
 
