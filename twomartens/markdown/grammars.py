@@ -16,6 +16,7 @@
 
 """markdown.grammars: Contains the grammars for markdown."""
 import html
+import re
 
 import modgrammar
 
@@ -23,10 +24,17 @@ grammar_whitespace_mode = "explicit"
 grammar_whitespace = modgrammar.WS_NOEOL
 
 
+class SingleWhitespace(modgrammar.SPACE):
+    """Defines the grammar for a single whitespace character"""
+    grammar_max = 1
+    regexp = re.compile('[^\S' + modgrammar.util.EOL_CHARS + '\t]')
+
+
 class SimpleText(modgrammar.Grammar):
     """Defines the grammar for simple text."""
-    grammar = (modgrammar.REPEAT(modgrammar.SPACE, min=0),
-               modgrammar.WORD(startchars="^\s#>*[`", restchars="^\n\r*[<`", escapes=True, fullmatch=True))
+    grammar = (modgrammar.REPEAT(SingleWhitespace, min=0, max=3),
+               modgrammar.WORD(startchars="^\s#>*[`", restchars="^*[<`" + modgrammar.util.EOL_CHARS, escapes=True,
+                               fullmatch=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -36,7 +44,7 @@ class SimpleText(modgrammar.Grammar):
 
 class EmptyLine(modgrammar.Grammar):
     """Defines the grammar for an empty line."""
-    grammar = (modgrammar.BOL, modgrammar.REPEAT(modgrammar.SPACE, min=0), modgrammar.EOL)
+    grammar = (modgrammar.BOL, modgrammar.OPTIONAL(modgrammar.SPACE), modgrammar.EOL)
 
 
 class Heading(modgrammar.Grammar):
@@ -53,7 +61,8 @@ class Heading(modgrammar.Grammar):
 
 class Bold(modgrammar.Grammar):
     """Defines the grammar for bold text."""
-    grammar = (modgrammar.L("**"), modgrammar.WORD("^\n\r*", escapes=True, fullmatch=True), modgrammar.L("**"))
+    grammar = (modgrammar.L("**"), modgrammar.WORD("^*" + modgrammar.util.EOL_CHARS, fullmatch=True),
+               modgrammar.L("**"))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -63,7 +72,7 @@ class Bold(modgrammar.Grammar):
 
 class Italic(modgrammar.Grammar):
     """Defines the grammar for italic text."""
-    grammar = (modgrammar.L("*"), modgrammar.WORD("^\n\r*", escapes=True, fullmatch=True), modgrammar.L("*"))
+    grammar = (modgrammar.L("*"), modgrammar.WORD("^*" + modgrammar.util.EOL_CHARS, fullmatch=True), modgrammar.L("*"))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -73,7 +82,7 @@ class Italic(modgrammar.Grammar):
 
 class InlineCode(modgrammar.Grammar):
     """Defines the grammar for inline code segments."""
-    grammar = (modgrammar.L("`"), modgrammar.WORD("^\n\r`", escapes=True, fullmatch=True), modgrammar.L("`"))
+    grammar = (modgrammar.L("`"), modgrammar.WORD("^`" + modgrammar.util.EOL_CHARS, fullmatch=True), modgrammar.L("`"))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -83,7 +92,7 @@ class InlineCode(modgrammar.Grammar):
 
 class LinkTitle(modgrammar.Grammar):
     """Defines the grammar for a link title."""
-    grammar = (modgrammar.WORD(startchars='^"\n\r)', escapes=True, fullmatch=True))
+    grammar = (modgrammar.WORD(startchars='^")' + modgrammar.util.EOL_CHARS, escapes=True, fullmatch=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -104,7 +113,7 @@ class AutomaticLink(modgrammar.Grammar):
 
 class Link(modgrammar.Grammar):
     """Defines the grammar for a link."""
-    grammar = (modgrammar.L("["), modgrammar.WORD(startchars="^]\n\r`*", escapes=True, fullmatch=True),
+    grammar = (modgrammar.L("["), modgrammar.WORD(startchars="^]`*" + modgrammar.util.EOL_CHARS, fullmatch=True),
                modgrammar.L("]("), modgrammar.WORD(startchars="^\s)", escapes=True, fullmatch=True),
                modgrammar.OPTIONAL(modgrammar.L(' "'),
                                    LinkTitle,
@@ -179,6 +188,7 @@ class OrderedList(modgrammar.Grammar):
 class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
     grammar = (modgrammar.REPEAT(
+        modgrammar.BOL,
         modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText)),
         modgrammar.EOL))
 
