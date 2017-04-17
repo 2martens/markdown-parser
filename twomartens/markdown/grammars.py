@@ -26,7 +26,7 @@ grammar_whitespace = modgrammar.WS_NOEOL
 class SimpleText(modgrammar.Grammar):
     """Defines the grammar for simple text."""
     grammar = (modgrammar.REPEAT(modgrammar.SPACE, min=0),
-               modgrammar.WORD(startchars="^\s#>*[`", restchars="^\n\r*[`", escapes=True, fullmatch=True))
+               modgrammar.WORD(startchars="^\s#>*[`", restchars="^\n\r*[<`", escapes=True, fullmatch=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -90,6 +90,18 @@ class LinkTitle(modgrammar.Grammar):
         self.text = self[0].string
 
 
+class AutomaticLink(modgrammar.Grammar):
+    """Defines the grammar for an automatic link."""
+    grammar = (modgrammar.L("<"), modgrammar.WORD(startchars="^[>\s`*", escapes=True, fullmatch=True),
+               modgrammar.L(">"))
+
+    def grammar_elem_init(self, sessiondata):
+        """Saves the text for later use."""
+        self.text = self[1].string
+        self.attributes = {"href": self[1].string}
+        self.tag = "a"
+
+
 class Link(modgrammar.Grammar):
     """Defines the grammar for a link."""
     grammar = (modgrammar.L("["), modgrammar.WORD(startchars="^]\n\r`*", escapes=True, fullmatch=True),
@@ -112,7 +124,8 @@ class Link(modgrammar.Grammar):
 class QuoteLine(modgrammar.Grammar):
     """Defines the grammar for a single line quote."""
     grammar = (modgrammar.BOL, modgrammar.L(">"),
-               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, SimpleText)), modgrammar.EOL)
+               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText)),
+               modgrammar.EOL)
 
 
 class Quote(modgrammar.Grammar):
@@ -127,7 +140,7 @@ class Quote(modgrammar.Grammar):
 class UnorderedListItem(modgrammar.Grammar):
     """Defines the grammar for an unordered list item."""
     grammar = (modgrammar.BOL, modgrammar.OR(modgrammar.L("* "), modgrammar.L("- "), modgrammar.L("+ ")),
-               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, SimpleText)))
+               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText)))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -146,7 +159,8 @@ class UnorderedList(modgrammar.Grammar):
 class OrderedListItem(modgrammar.Grammar):
     """Defines the grammar for an unordered list item."""
     grammar = (modgrammar.BOL, modgrammar.WORD(startchars="0-9", fullmatch=True),
-               modgrammar.L(". "), modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, SimpleText)))
+               modgrammar.L(". "), modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink,
+                                                                   SimpleText)))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -164,7 +178,9 @@ class OrderedList(modgrammar.Grammar):
 
 class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
-    grammar = (modgrammar.REPEAT(modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, SimpleText), min=1),
+    grammar = (modgrammar.REPEAT(modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink,
+                                                                 SimpleText),
+                                                   min=1),
                                  modgrammar.EOL, min=1))
 
 

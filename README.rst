@@ -113,6 +113,7 @@ Example::
    a paragraph with [a link](https://example.com "title")
 
    another with another [link](https://example.com)
+   or for change an automatic link <https://example.com>
 
 Lists
 ^^^^^
@@ -133,7 +134,7 @@ Example::
    * but this is a new list
    * which even contains **bold text** and *italic text*
    * or an `inline code segment`
-   * or a [link](https://example.com)
+   * or a [link](https://example.com), <https://example.com>
 
 The list items of ordered lists have to start with numbers (``0-9``), followed by a dot (``.``) and a space.
 It doesn't matter for the output which numbers stand in front of the dot.
@@ -147,7 +148,7 @@ Example::
    0.  it can also contain **bold text**
    11. and *italic text*
    99. and `inline code`
-   42. and a [link](https://example.com "title")
+   42. and a [link](https://example.com "title"), <https://example.com>
 
    0. a new list is started here
 
@@ -164,7 +165,7 @@ Examples::
    > and continues in the next line.
    > It can contain **bold text** and *italic text*.
    > inline `code blocks` are also possible
-   > The same goes for [links](https://example.com)
+   > The same goes for [links](https://example.com), <https://example.com>
 
 Paragraphs
 ^^^^^^^^^^
