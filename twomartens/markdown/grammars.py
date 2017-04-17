@@ -69,11 +69,8 @@ class InlineCode(modgrammar.Grammar):
 
 class QuoteLine(modgrammar.Grammar):
     """Defines the grammar for a single line quote."""
-    grammar = (modgrammar.BOL, modgrammar.L(">"), modgrammar.REST_OF_LINE, modgrammar.EOL)
-
-    def grammar_elem_init(self, sessiondata):
-        """Saves the text for later use."""
-        self.quoteLine = self[2].string
+    grammar = (modgrammar.BOL, modgrammar.L(">"),
+               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, SimpleText)), modgrammar.EOL)
 
 
 class Quote(modgrammar.Grammar):
@@ -82,11 +79,6 @@ class Quote(modgrammar.Grammar):
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
-        quote = ""
-        for elem in self.find_all(QuoteLine):
-            quote = quote + " " + elem.quoteLine
-
-        self.text = quote
         self.tag = "quote"
 
 

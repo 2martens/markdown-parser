@@ -149,8 +149,8 @@ Examples::
 
    > A new quote starts here
    > and continues in the next line.
-   > It can contain **not rendered bold text** and *not rendered italic text*.
-   > inline `code blocks` are also not rendered
+   > It can contain **bold text** and *italic text*.
+   > inline `code blocks` are also possible
 
 Paragraphs
 ^^^^^^^^^^

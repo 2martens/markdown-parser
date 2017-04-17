@@ -43,4 +43,4 @@ Or one with `inline code that contains <html> tags`. **bold**$variable
 > A multiline quote
 > is really fine.
 
-> Even a quote with **bold text** and *italic text*
+> Even a quote with **bold text** and *italic text* or even `code segments`
