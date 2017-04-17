@@ -32,7 +32,7 @@ class SingleWhitespace(modgrammar.SPACE):
 
 class SimpleText(modgrammar.Grammar):
     """Defines the grammar for simple text."""
-    grammar = (modgrammar.REPEAT(SingleWhitespace, min=0, max=3),
+    grammar = (modgrammar.REPEAT(SingleWhitespace, min=0, max=3, collapse=True),
                modgrammar.WORD(startchars="^\s#>*[`", restchars="^*[<`" + modgrammar.util.EOL_CHARS, escapes=True,
                                fullmatch=True))
 
@@ -136,24 +136,46 @@ class Link(modgrammar.Grammar):
 class QuoteLine(modgrammar.Grammar):
     """Defines the grammar for a single line quote."""
     grammar = (modgrammar.BOL, modgrammar.L(">"),
-               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText)),
+               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText),
+                                 collapse=True),
                modgrammar.EOL)
+
+    grammar_collapse = False
 
 
 class Quote(modgrammar.Grammar):
     """Defines the grammar for a quote."""
-    grammar = (modgrammar.REPEAT(QuoteLine, min=1))
+    grammar = (modgrammar.REPEAT(QuoteLine, min=1, collapse=True))
 
     def grammar_elem_init(self, sessiondata):
-        """Saves the text for later use."""
+        """Saves the text for later use and appends a space to each SimpleText that is followed by an EOL character."""
         self.tag = "quote"
         self.options = {"onlyOuterLinebreaks": True}
+        highest_index = len(self.elements) - 1
+        current_index = -1
+        add_space_at_start = False
+        for elem in self.elements:
+            current_index += 1
+            _length = len(elem.elements)
+            _eol_index = _length - 1
+            _first_content_index = 2
+            _last_content_index = _eol_index - 1
+            if add_space_at_start and elem[_first_content_index].grammar_name == "SimpleText":
+                elem[_first_content_index].text = " " + elem[_first_content_index].text
+                add_space_at_start = False
+            if current_index < highest_index:
+                if elem[_last_content_index].grammar_name == "SimpleText":
+                    text = elem[_last_content_index].text.rstrip()
+                    elem[_last_content_index].text = text + " "
+                else:
+                    add_space_at_start = True
 
 
 class UnorderedListItem(modgrammar.Grammar):
     """Defines the grammar for an unordered list item."""
     grammar = (modgrammar.BOL, modgrammar.OR(modgrammar.L("* "), modgrammar.L("- "), modgrammar.L("+ ")),
-               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText)))
+               modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText),
+                                 collapse=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -162,7 +184,7 @@ class UnorderedListItem(modgrammar.Grammar):
 
 class UnorderedList(modgrammar.Grammar):
     """Defines the grammar for an unordered list."""
-    grammar = (EmptyLine, modgrammar.LIST_OF(UnorderedListItem, sep=modgrammar.EOL), modgrammar.EOL)
+    grammar = (EmptyLine, modgrammar.LIST_OF(UnorderedListItem, sep=modgrammar.EOL, collapse=True), modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -173,7 +195,7 @@ class OrderedListItem(modgrammar.Grammar):
     """Defines the grammar for an unordered list item."""
     grammar = (modgrammar.BOL, modgrammar.WORD(startchars="0-9", fullmatch=True),
                modgrammar.L(". "), modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink,
-                                                                   SimpleText)))
+                                                                   SimpleText), collapse=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -182,7 +204,7 @@ class OrderedListItem(modgrammar.Grammar):
 
 class OrderedList(modgrammar.Grammar):
     """Defines the grammar for an unordered list."""
-    grammar = (EmptyLine, modgrammar.LIST_OF(OrderedListItem, sep=modgrammar.EOL), modgrammar.EOL)
+    grammar = (EmptyLine, modgrammar.LIST_OF(OrderedListItem, sep=modgrammar.EOL, collapse=True), modgrammar.EOL)
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -193,7 +215,7 @@ class CodeBlock(modgrammar.Grammar):
     """Defines the grammar for a code block."""
     grammar = (modgrammar.REPEAT(modgrammar.BOL, modgrammar.L("    ") | modgrammar.L("\t"),
                                  modgrammar.REST_OF_LINE,
-                                 modgrammar.EOL))
+                                 modgrammar.EOL, collapse=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
@@ -221,8 +243,29 @@ class Text(modgrammar.Grammar):
     """Defines the grammar for normal text."""
     grammar = (modgrammar.REPEAT(
         modgrammar.BOL,
-        modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText)),
-        modgrammar.EOL))
+        modgrammar.REPEAT(modgrammar.OR(Bold, Italic, InlineCode, Link, AutomaticLink, SimpleText), collapse=True),
+        modgrammar.EOL, collapse=True))
+
+    def grammar_elem_init(self, sessiondata):
+        """Appends a space to each SimpleText that is followed by an EOL character."""
+        highest_index = len(self.elements) - 1
+        current_index = -1
+        add_space_at_start = False
+        for elem in self.elements:
+            current_index += 1
+            _length = len(elem.elements)
+            _eol_index = _length - 1
+            _first_content_index = 1
+            _last_content_index = _eol_index - 1
+            if add_space_at_start and elem[_first_content_index].grammar_name == "SimpleText":
+                elem[_first_content_index].text = " " + elem[_first_content_index].text
+                add_space_at_start = False
+            if current_index < highest_index:
+                if elem[_last_content_index].grammar_name == "SimpleText":
+                    text = elem[_last_content_index].text.rstrip()
+                    elem[_last_content_index].text = text + " "
+                else:
+                    add_space_at_start = True
 
 
 class Paragraph(modgrammar.Grammar):
@@ -238,8 +281,7 @@ class Paragraph(modgrammar.Grammar):
 class MarkdownGrammar(modgrammar.Grammar):
     """Provides the grammar for Markdown."""
     grammar = (modgrammar.REPEAT(modgrammar.OR(Heading, UnorderedList, OrderedList, Quote, Paragraph,
-                                               EmptyLine, PreBlock)))
-    grammar_collapse = True
+                                               EmptyLine, PreBlock), collapse=True))
 
     def grammar_elem_init(self, sessiondata):
         """Saves the text for later use."""
