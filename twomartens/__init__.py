@@ -14,6 +14,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+"""twomartens: Namespace package"""
+
 # See http://peak.telecommunity.com/DevCenter/setuptools#namespace-packages
 try:
     __import__('pkg_resources').declare_namespace(__name__)
