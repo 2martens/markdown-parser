@@ -3,10 +3,10 @@ Markdown Parser
 
 This program was created in the context of the code competition of it-talents.com in 
 April 2017. It is split into two main components. The parser side takes the Markdown
-input and creates an internal representation. The renderer component uses the internal
+input and creates an internal representation. The transform component uses the internal
 representation and creates the HTML output. 
 
-In general the system is designed to be modular and expandable. For example a renderer
+In general the system is designed to be modular and expandable. For example a transformation
 for LaTeX could be relatively easily added.
 
 Installation
@@ -42,7 +42,7 @@ parameter has to be the name of the output file. The file doesn't have to exist 
 overwritten completely. The output file will contain the markup in the selected output format (as of now it is always
 HTML).
 
-To allow for easier extension the program accepts the ``-r, --renderer`` option. It can be used to specify the output
+To allow for easier extension the program accepts the ``-f, --format`` option. It can be used to specify the output
 format. Currently only HTML is supported which is also selected by default. Therefore it is not required to specify
 the option for the program to work.
 
@@ -53,7 +53,7 @@ Example::
 
 Example (with option)::
 
-   tm-parse-markdown --renderer html my-markdown-file.md my-html-file.html
+   tm-parse-markdown --format html my-markdown-file.md my-html-file.html
 
 Markdown Syntax
 ---------------

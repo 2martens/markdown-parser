@@ -14,7 +14,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""markdown.renderer: provides rendering functionality"""
+"""markdown.compiler: provides compiling functionality"""
 import os
 from string import Template
 
@@ -25,21 +25,21 @@ from .grammars import Heading
 TAB_SEP = "    "
 
 
-def render(structure: modgrammar.Grammar, output_format: str) -> str:
-    """Renders the given structure in the given output format.
+def transform(structure: modgrammar.Grammar, output_format: str) -> str:
+    """Transforms the given structure into the given output format.
 
     :param modgrammar.Grammar structure: 
     :param str output_format: the output format
     """
-    return globals().get("_" + output_format + "_render")(structure)
+    return globals().get("_" + output_format + "_transform")(structure)
 
 
-def _html_render(structure: modgrammar.Grammar) -> str:
-    """Renders the given structure in HTML and returns the finished output.
+def _html_transform(structure: modgrammar.Grammar) -> str:
+    """Transforms the given structure into HTML and returns the finished output.
     
     The first heading in the markdown text will be used for the HTML title element.
     
-    :param modgrammar.Grammar structure: the structure which is rendered
+    :param modgrammar.Grammar structure: the structure which is transformed
     """
     replacements = {"unordered_list": "ul", "quote": "blockquote", "ordered_list": "ol"}
     elements = _extract_elements(structure, replacements)
@@ -57,15 +57,15 @@ def _html_render(structure: modgrammar.Grammar) -> str:
     for tag, text, children, attributes, options in elements:
         if content != "":
             content = content + "\n"
-        content = content + _html_render_block(tag, children, text, attributes, options)
+        content = content + _html_build_block(tag, children, text, attributes, options)
 
     output = template.substitute(title=title, content=content)
     return output
 
 
-def _html_render_block(tag: str, elements: list, text: str = None, attributes: map = None, options: map = None,
-                       nesting: int = 1) -> str:
-    """Renders an HTML block element and returns the HTML output.
+def _html_build_block(tag: str, elements: list, text: str = None, attributes: map = None, options: map = None,
+                      nesting: int = 1) -> str:
+    """Builds an HTML block element and returns the HTML output.
     
     Level 1 elements are indented by four spaces. Level 2 elements are indented by 8 spaces and so on.
     Level 1 elements with children get their tags on a separate line. The tags of level 2 (or higher) elements are on
@@ -83,7 +83,7 @@ def _html_render_block(tag: str, elements: list, text: str = None, attributes: m
     attributes = attributes if attributes is not None else {}
     default_options = {"indentation": True, "onlyOuterLinebreaks": False}
     options = {**default_options, **options} if options is not None else default_options
-    content = (nesting * TAB_SEP) + "<" + tag + _html_render_attributes(attributes) + ">"
+    content = (nesting * TAB_SEP) + "<" + tag + _html_build_attributes(attributes) + ">"
     inserted_linebreaks = 0
     inserted_indents = 0
     if len(elements) == 0 and text is not None:
@@ -101,17 +101,17 @@ def _html_render_block(tag: str, elements: list, text: str = None, attributes: m
                      or (options["onlyOuterLinebreaks"] and inserted_indents == 0))):
                 content += indent
                 inserted_indents += 1
-            content += _html_render_item(_tag, _text, _attributes, _tag != "text")
+            content += _html_build_item(_tag, _text, _attributes, _tag != "text")
         else:
-            content = content + _html_render_block(_tag, _children, _text, _attributes, _options, nesting + 1)
+            content = content + _html_build_block(_tag, _children, _text, _attributes, _options, nesting + 1)
     if nesting == 1 and len(elements) and options["indentation"]:
         content = content + "\n" + (nesting * TAB_SEP)
     content = content + "</" + tag + ">"
     return content
 
 
-def _html_render_item(tag: str, text: str, attributes: map = None, include_tags=True) -> str:
-    """Renders an HTML inline element and returns the HTML output.
+def _html_build_item(tag: str, text: str, attributes: map = None, include_tags=True) -> str:
+    """Builds an HTML inline element and returns the HTML output.
     
     :param str tag: the HTML tag
     :param str text: the text between the HTML tags
@@ -119,7 +119,7 @@ def _html_render_item(tag: str, text: str, attributes: map = None, include_tags=
     :param bool include_tags: True if the tags should be part of the output
     """
     attributes = attributes if attributes is not None else {}
-    opening_tag = "<" + tag + _html_render_attributes(attributes) + ">"
+    opening_tag = "<" + tag + _html_build_attributes(attributes) + ">"
     closing_tag = "</" + tag + ">"
     if include_tags:
         return opening_tag + text + closing_tag
@@ -127,8 +127,8 @@ def _html_render_item(tag: str, text: str, attributes: map = None, include_tags=
         return text
 
 
-def _html_render_attributes(attributes: map) -> str:
-    """Renders the attributes and returns the HTML output.
+def _html_build_attributes(attributes: map) -> str:
+    """Builds the attributes and returns the HTML output.
 
     :param map attributes: map of attributes 
     """
