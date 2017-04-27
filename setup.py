@@ -29,7 +29,7 @@ with open("README.rst", "rb") as f:
     long_desc = f.read().decode()
 setup(
     name="twomartens.markdown",
-    description="Markdown parser that renders the markdown in HTML",
+    description="Markdown parser that transforms the markdown into HTML",
     long_description=long_desc,
     author="Jim Martens",
     author_email="github@2martens.de",
